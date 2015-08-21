@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %} 
+    {{ super() }}
+{% endblock %}
+{% block title %}personal{% endblock %}
+
+{% block body %}
+    {% block navbar %}{{ super() }}{% endblock%}
+
+    {% macro render_task(task) %}
+        <li class='item'>{{ task.text }}{{task.state}}</li>
+    {% endmacro %}
+
+    <div class="main">
+        <h3>{{ username }}'s tasks:</h3>
+        <ul>
+            {% for t in tasks %}
+                {{ render_task(t) }}
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="container" class="main">
+        {{ wtf.quick_form(form) }}
+    </div>
+
+
+{% endblock %}
