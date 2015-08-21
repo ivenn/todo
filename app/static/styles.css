@@ -1,0 +1,17 @@
+.main{
+    width: 80%;
+    margin: auto;
+}
+
+.item{
+    width: 80%;
+    border: 1px black;
+}
+
+.item-done{
+    background: #00FF00
+}
+
+ul{
+    list-style-type: none;
+}

@@ -47,7 +47,7 @@ def index():
 
 
 @app.route('/registration', methods=['GET','POST'])
-def register():
+def registeration():
     form = RegistrationForm()
 
     if request.method == 'GET':
