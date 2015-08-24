@@ -91,10 +91,6 @@ def logout():
     else:
         return render_template('index.html', msg='You is not logged in')
 
-@app.route('/time', methods=['GET'])
-def time():
-    return render_template('time.html', current_time=datetime.utcnow())
-
 """
 @app.errorhandler(404)
 def page_not_found(e):
