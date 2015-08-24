@@ -51,4 +51,4 @@ class Task(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return '<Task %r>' % self.text
+        return '<Task %r: %s>' % (self.text, self.state)
