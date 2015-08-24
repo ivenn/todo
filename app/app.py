@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from flask import Flask, session, redirect, url_for, escape, request, render_template
+from flask import Flask, session, redirect, url_for, escape, request, render_template, flash
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.script import Manager
@@ -76,14 +76,11 @@ def login():
         else:
             if form.validate_on_submit():
                 user = User.query.filter_by(username=form.name.data).first()
-                if not user:
-                    return render_template('index.html', msg='No such user %s' %form.name.data)
-                else:
-                    if user.password == form.password.data:
-                        session['username'] = form.name.data
-                        return redirect(url_for('personal'))
-                    else:
-                        return render_template('index.html', msg='Invalid password')
+                if user.verify_password(form.password.data):
+                    session['username'] = form.name.data
+                    return redirect(url_for('personal'))
+                form.password.errors.append('Invalid password')
+            return render_template('login.html', form=form)
 
 
 @app.route('/logout', methods=['GET'])
