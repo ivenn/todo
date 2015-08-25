@@ -25,11 +25,13 @@ db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', msg='')
+    return render_template('index.html', msg='', username=is_authenticated())
 
 
 @app.route('/registration', methods=['GET','POST'])
 def registration():
+    if 'username' in session:
+        redirect(url_for('personal'))
     form = RegistrationForm()
 
     if request.method == 'GET':
@@ -56,7 +58,7 @@ def personal():
                                 state=Task.STATE_OPEN, user_id=user_id)
                 db.session.add(new_task)
                 db.session.commit()
-        return render_template('personal.html', username=session['username'], 
+        return render_template('personal.html', username=session['username'],
                                 tasks=Task.query.filter_by(user_id=user_id), form=form)
     else:
         return redirect(url_for('login'))
@@ -69,7 +71,7 @@ def login():
         if 'username' in session:
             return redirect(url_for('personal'))
         else:
-            return render_template('login.html', form=form)
+            return render_template('login.html', form=form, username=is_authenticated())
     elif request.method == 'POST':
         if 'username' in session:
             return redirect(url_for('personal'))
@@ -80,7 +82,7 @@ def login():
                     session['username'] = form.name.data
                     return redirect(url_for('personal'))
                 form.password.errors.append('Invalid password')
-            return render_template('login.html', form=form)
+            return render_template('login.html', form=form, username=is_authenticated())
 
 
 @app.route('/logout', methods=['GET'])
@@ -90,6 +92,14 @@ def logout():
         return redirect(url_for('login'))
     else:
         return render_template('index.html', msg='You is not logged in')
+
+
+def is_authenticated():
+    """
+    @:return: User name if user is Authenticated in another case None
+
+    """
+    return session['username'] if 'username' in session else None
 
 """
 @app.errorhandler(404)
