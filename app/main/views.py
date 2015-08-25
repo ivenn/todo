@@ -78,9 +78,15 @@ def logout():
         return render_template('index.html', msg='You is not logged in')
 
 
+@main.route('/settings', methods=['GET', 'POST'])
+def settings():
+    return render_template('settings.html', username=is_authenticated())
+
+
 def is_authenticated():
     """
     @:return: User name if user is Authenticated in another case None
 
     """
     return session['username'] if 'username' in session else None
+
