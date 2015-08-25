@@ -3,11 +3,25 @@
 
 {% block head %} 
     {{ super() }}
-{% endblock %}
+{% endblock head %}
+
 {% block title %}personal{% endblock %}
 
+{% block nbright %}
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> {{ username }} 
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+{% endblock nbright %}
+
 {% block body %}
-    {% block navbar %}{{ super() }}{% endblock%}
+    {{ super() }}
 
     {% macro render_task(task) %}
         <li class='item'>{{ task.text }}{{task.state}}</li>
@@ -21,9 +35,9 @@
             {% endfor %}
         </ul>
     </div>
+
     <div class="container main">
         {{ wtf.quick_form(form) }}
     </div>
 
-
-{% endblock %}
+{% endblock body %}

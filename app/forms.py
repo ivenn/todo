@@ -1,24 +1,31 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import Required, Length, Email, ValidationError
 from models import User
 
 def validate_name(form, field):
-    if not User.is_user_unique(field.data):
+    if not User.is_username_valid(field.data):
+        raise ValidationError("Username is not valid, \
+                              it should contains only letters and numbers")
+    if User.is_user_exists(field.data):
         raise ValidationError("Username is not unique")
+
+def validate_login_name(form, field):
+    if not User.is_user_exists(field.data):
+        raise ValidationError("There are no user with such username")
 
 
 class RegistrationForm(Form):
     name = StringField('Enter your name', validators=[Required(), Length(3, 32), validate_name])
-    password = StringField('Enter your password', validators=[Required(), Length(3, 32)])
+    password = PasswordField('Enter your password', validators=[Required(), Length(3, 32)])
     email = StringField('Enter your email', validators=[Required(), Email()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Register')
 
 
 class LoginForm(Form):
-    name = StringField('Username', validators=[Required(),])
-    password = StringField('Password', validators=[Required(),])
-    submit = SubmitField('Submit')
+    name = StringField('Username', validators=[Required(), validate_login_name])
+    password = PasswordField('Password', validators=[Required(),])
+    submit = SubmitField('Login')
 
 
 class TaskForm(Form):
