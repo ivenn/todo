@@ -11,7 +11,7 @@
     {% block navbar %}{{ super() }}{% endblock%}
     <div class="container main">
         {{ wtf.quick_form(form) }}
-        <a class="fixed-to-right" href="{{ url_for('registration') }}">Register</a>
+        <a class="fixed-to-right" href="{{ url_for('main.registration') }}">Register</a>
     </div>
 
 {% endblock %}

@@ -1,8 +1,10 @@
-from app.__init__ import create_app
+from app.__init__ import create_app, db
+from flask.ext.script import Manager
 
-def start():
-    app = create_app()
-    #app.run(debug=True)
+app = create_app()
+manager = Manager(app)
 
 if __name__ == "__main__":
-	start()
+    with app.app_context():
+        db.create_all()
+    manager.run()
