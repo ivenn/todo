@@ -2,7 +2,11 @@
 venv
 
 # Python pyc files
-*.pyc
+*.py[cod]
 
 # Tmp system files
 *.py~
+
+# IDEA or Pyhcarm projects
+.idea
+
