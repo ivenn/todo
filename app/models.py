@@ -1,8 +1,10 @@
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import db
+from flask.ext.login import UserMixin
 
-class User(db.Model):
+from . import db, lm
+
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True, index=True)
@@ -34,6 +36,16 @@ class User(db.Model):
     def is_user_exists(username):
         return bool(User.query.filter_by(username=username).first())
 
+    @staticmethod
+    def add_user(new_user):
+        db.session.add(new_user)
+        db.session.commit()
+
+
+@lm.user_loader
+def load_user(userid):
+    return User.query.get(userid)
+
 
 class Task(db.Model):
     STATE_OPEN = 'open'
@@ -50,3 +62,8 @@ class Task(db.Model):
 
     def __repr__(self):
         return '<Task %r: %s>' % (self.text, self.state)
+
+    @staticmethod
+    def add_task(new_task):
+        db.session.add(new_task)
+        db.session.commit()
