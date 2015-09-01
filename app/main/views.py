@@ -35,13 +35,10 @@ def registration():
 @login_required
 def personal():
     form = TaskForm()
-    user_id = User.query.filter_by(username=g.user.username).first().id
 
     if form.validate_on_submit():
         Task.add_task(Task(text=form.text.data, state=Task.STATE_OPEN, user_id=g.user.id))
-    return render_template('personal.html', 
-                           username=g.user.username if g.user.is_authenticated() else None,
-                           tasks=Task.query.filter_by(user_id=g.user.id),
+    return render_template('personal.html', user=g.user, tasks=Task.query.filter_by(user_id=g.user.id),
                            form=form)
 
 
@@ -58,8 +55,7 @@ def login():
             return redirect(url_for('main.personal'))
         else:
             form.password.errors.append('Invalid password')
-    return render_template('login.html', form=form, 
-                            username=g.user.username if g.user.is_authenticated() else None)
+    return render_template('login.html', form=form, user=g.user)
 
 
 @main.route('/logout')
@@ -72,6 +68,6 @@ def logout():
 @main.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    return render_template('settings.html', username=g.user.username)
+    return render_template('settings.html', user=g.user)
 
 
