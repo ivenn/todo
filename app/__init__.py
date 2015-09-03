@@ -1,35 +1,31 @@
+import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.login import LoginManager
+from flask.ext.mail import Mail
 
 from config import config
 
+# initialize application
+app = Flask(__name__)
+app.config.from_object(config[os.environ.setdefault('APP_SETTINGS', 'default')])
+
+# initialize extentions
 bootstrap = Bootstrap()
+bootstrap.init_app(app)
 moment = Moment()
-db = SQLAlchemy()
+moment.init_app(app)
+mail = Mail(app)
+db = SQLAlchemy(app)
 lm = LoginManager()
+lm.init_app(app)
 lm.login_view = 'main.login'
 
-def create_app(config_name='default'):
-    app = Flask(__name__)
+from todo.app.main import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
-    app.config.from_object(config[config_name])
-
-    config[config_name].init_app(app)
-    bootstrap.init_app(app)
-    moment.init_app(app)
-    db.init_app(app)
-    lm.init_app(app)
-
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-
-    with app.app_context():
-        from models import User, Task
-        db.create_all()
-
-    return app
+from models import User, Task
 
 

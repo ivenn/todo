@@ -10,3 +10,5 @@ venv
 # IDEA or Pyhcarm projects
 .idea
 
+# sqlite db file
+db1

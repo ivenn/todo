@@ -2,15 +2,17 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin
 
-from . import db, lm
+from app import db, lm
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean)
+    is_admin = db.Column(db.Boolean, default=False)
     email = db.Column(db.String(40), unique=True)
+    registred_on = db.Column(db.DataTime)
+    confirmed = db.Columnt(db.Boolean, default=False)
 
     tasks = db.relationship('Task', backref='user')
 

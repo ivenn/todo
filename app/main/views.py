@@ -1,9 +1,11 @@
-from flask import session, redirect, url_for, escape, request, render_template, g
+from flask import session, redirect, url_for, escape, request, render_template, g, flash
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
 from ..models import User, Task
 from . import main
 from .forms import RegistrationForm, LoginForm, TaskForm
+from .token import generate_confiramation_token, confirm_token
+from todo.app.email_sender import send_email
 
 
 @main.before_request
@@ -26,7 +28,15 @@ def registration():
     if form.validate_on_submit():
         User.add_user(User(username=form.name.data,
                             password=form.password.data,
-                            is_admin=False, email=form.email.data))
+                            email=form.email.data,
+                            confirmed=False))
+
+        token = generate_confiramation_token(form.name)
+        confirm_url = url_for("main.confirmation", token=token, _external=True)
+        html_mail = render_template('user/activate.html', confirm_url=confirm_url)
+        send_email(to=form.email_data, subject='registration on toDO', template=html_mail)
+        flash("Welcome! Please, follow link from confirmation email to finish registration.")
+
         return render_template('index.html', msg='You was registered with %s username' % form.name.data)
     return render_template('registration.html', form=form)
 
@@ -57,6 +67,21 @@ def login():
             form.password.errors.append('Invalid password')
     return render_template('login.html', form=form, user=g.user)
 
+@main.route('/confirm/<token>')
+def confirmation(token):
+    try:
+        name = confirm_token(token)
+    except:
+        flash('The confirmation link us invalid or expired')
+    user = User.query.filter_by(name=name).first_or_404()
+    if user.confirmed:
+        flash('User was already confirmed, just login!')
+    else:
+        user.confirmed = True
+        db.session.add(user)
+        db.session.commit()
+        flash("Your registration confirmed! Welcome!")
+    return redirect(url_for('main.personal'))
 
 @main.route('/logout')
 @login_required
