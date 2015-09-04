@@ -11,7 +11,6 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)
     email = db.Column(db.String(40), unique=True)
-    registred_on = db.Column(db.DateTime)
     confirmed = db.Column(db.Boolean, default=False)
 
     tasks = db.relationship('Task', backref='user')
