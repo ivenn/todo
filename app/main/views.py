@@ -4,8 +4,8 @@ from flask.ext.login import login_user, logout_user, login_required, current_use
 from ..models import User, Task
 from . import main
 from .forms import RegistrationForm, LoginForm, TaskForm
-from .token import generate_confiramation_token, confirm_token
-from todo.app.email_sender import send_email
+from app.token import generate_confiramation_token, confirm_token
+from app.email_sender import send_email
 
 
 @main.before_request
@@ -31,10 +31,15 @@ def registration():
                             email=form.email.data,
                             confirmed=False))
 
-        token = generate_confiramation_token(form.name)
+        token = generate_confiramation_token(form.name.data)
+        print token
         confirm_url = url_for("main.confirmation", token=token, _external=True)
         html_mail = render_template('user/activate.html', confirm_url=confirm_url)
-        send_email(to=form.email_data, subject='registration on toDO', template=html_mail)
+        try:
+            send_email(to=form.email.data, subject='registration on toDO', template=html_mail)
+        except Exception, e:
+            print type(e), e
+            print "E-mail was not sent"
         flash("Welcome! Please, follow link from confirmation email to finish registration.")
 
         return render_template('index.html', msg='You was registered with %s username' % form.name.data)
@@ -70,16 +75,16 @@ def login():
 @main.route('/confirm/<token>')
 def confirmation(token):
     try:
-        name = confirm_token(token)
+        username = confirm_token(token)
     except:
         flash('The confirmation link us invalid or expired')
-    user = User.query.filter_by(name=name).first_or_404()
+    user = User.query.filter_by(username=username).first_or_404()
     if user.confirmed:
         flash('User was already confirmed, just login!')
     else:
-        user.confirmed = True
-        db.session.add(user)
-        db.session.commit()
+        user.confirm()
+        # db.session.add(user)
+        # db.session.commit()
         flash("Your registration confirmed! Welcome!")
     return redirect(url_for('main.personal'))
 

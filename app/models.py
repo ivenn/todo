@@ -11,8 +11,8 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)
     email = db.Column(db.String(40), unique=True)
-    registred_on = db.Column(db.DataTime)
-    confirmed = db.Columnt(db.Boolean, default=False)
+    registred_on = db.Column(db.DateTime)
+    confirmed = db.Column(db.Boolean, default=False)
 
     tasks = db.relationship('Task', backref='user')
 
@@ -27,6 +27,10 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def confirm(self):
+        self.confirmed = True
+        db.session.add(self)
+        db.session.commit()
     def __repr__(self):
         return '<User %r>' % self.username
 

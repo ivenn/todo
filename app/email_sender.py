@@ -1,6 +1,6 @@
 from flask.ext.mail import Message
 
-from project import app, mail
+from app import app, mail
 
 
 def send_email(to, subject, template):
@@ -10,4 +10,5 @@ def send_email(to, subject, template):
         html=template,
         sender=app.config['MAIL_DEFAULT_SENDER']
     )
+    print app.config['MAIL_DEFAULT_SENDER'], app.config['MAIL_PORT'], app.config['MAIL_SERVER']
     mail.send(msg)

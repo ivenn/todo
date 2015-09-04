@@ -4,10 +4,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SECURITY_PASSWORD_SALT = 'ryhn_56_nols'
-    EMAIL_SERVER = 'mailtrap.io'
-    MAIL_PORT = '2525'
-    MAIL_USERNAME = '4352878fed3dd26e1'
-    MAIL_PASSWORD = '8e3469cbab78f9'
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = 'petr.nuzhnov@gmail.com'
+    MAIL_PASSWORD = 'X18rd128m'
+    MAIL_DEFAULT_SENDER = "no-reply@todo.com"
 
     @staticmethod
     def init_app(app):

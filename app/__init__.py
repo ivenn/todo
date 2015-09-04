@@ -17,13 +17,14 @@ bootstrap = Bootstrap()
 bootstrap.init_app(app)
 moment = Moment()
 moment.init_app(app)
-mail = Mail(app)
+mail = Mail()
+mail.init_app(app)
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'main.login'
 
-from todo.app.main import main as main_blueprint
+from app.main import main as main_blueprint
 app.register_blueprint(main_blueprint)
 
 from models import User, Task
