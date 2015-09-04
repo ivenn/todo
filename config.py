@@ -7,8 +7,8 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = 'petr.nuzhnov@gmail.com'
-    MAIL_PASSWORD = 'X18rd128m'
+    MAIL_USERNAME = ''
+    MAIL_PASSWORD = ''
     MAIL_DEFAULT_SENDER = "no-reply@todo.com"
 
     @staticmethod
