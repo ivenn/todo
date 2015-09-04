@@ -7,8 +7,8 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = ''
-    MAIL_PASSWORD = ''
+    MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '')
+    MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '')
     MAIL_DEFAULT_SENDER = "no-reply@todo.com"
 
     @staticmethod

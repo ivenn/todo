@@ -27,13 +27,13 @@
             </div>
             {% block nbright %}
                 {% if not g.user.is_authenticated() %}
-                    <<ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right">
                         <a class="navbar-brand" href="/login">login</a>
                     </ul>
                 {% else %}
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> {{ g.user.username }}
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right">
@@ -47,15 +47,17 @@
        </div>
     </nav>
     {% endblock navbar %}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        {% block flashes %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        {% endblock flashes %}
     {% endblock body %}
     </body>
 </html>

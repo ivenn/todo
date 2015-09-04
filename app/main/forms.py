@@ -11,6 +11,10 @@ def validate_name(form, field):
     if User.is_user_exists(field.data):
         raise ValidationError("Username is not unique")
 
+def validate_email(form, field):
+    if User.is_email_exists(field.data):
+        raise ValidationError("Email is not unique")
+
 def validate_login_name(form, field):
     if not User.is_user_exists(field.data):
         raise ValidationError("There are no user with such username")
@@ -19,7 +23,7 @@ def validate_login_name(form, field):
 class RegistrationForm(Form):
     name = StringField('Enter your name', validators=[Required(), Length(3, 32), validate_name])
     password = PasswordField('Enter your password', validators=[Required(), Length(3, 32)])
-    email = StringField('Enter your email', validators=[Required(), Email()])
+    email = StringField('Enter your email', validators=[Required(), Email(), validate_email])
     submit = SubmitField('Register')
 
 

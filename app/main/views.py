@@ -1,9 +1,9 @@
 from flask import session, redirect, url_for, escape, request, render_template, g, flash
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
-from ..models import User, Task
-from . import main
-from .forms import RegistrationForm, LoginForm, TaskForm
+from app.models import User, Task
+from app.main import main
+from app.main.forms import RegistrationForm, LoginForm, TaskForm
 from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
 
@@ -18,11 +18,10 @@ def before_request():
 def index():
     return redirect(url_for('main.login'))
 
-
 @main.route('/registration', methods=['GET','POST'])
 def registration():
-    if g.user is not None and g.user.is_authenticated():
-        redirect(url_for('main.personal'))
+    if g.user.is_authenticated():
+        return redirect(url_for('main.personal'))
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -32,7 +31,6 @@ def registration():
                             confirmed=False))
 
         token = generate_confiramation_token(form.name.data)
-        print token
         confirm_url = url_for("main.confirmation", token=token, _external=True)
         html_mail = render_template('user/activate.html', confirm_url=confirm_url)
         try:
@@ -59,7 +57,7 @@ def personal():
 
 @main.route('/login', methods=['GET','POST'])
 def login():
-    if g.user is not None and g.user.is_authenticated():
+    if g.user.is_authenticated():
         return redirect(url_for('main.personal'))
 
     form = LoginForm()
@@ -67,6 +65,7 @@ def login():
         user = User.query.filter_by(username=form.name.data).first()
         if user.verify_password(form.password.data):
             login_user(user)
+            if not user.confirmed: flash('You registration is not finished, please, confirm your accout by link from email')
             return redirect(url_for('main.personal'))
         else:
             form.password.errors.append('Invalid password')
@@ -74,6 +73,8 @@ def login():
 
 @main.route('/confirm/<token>')
 def confirmation(token):
+    if not g.user.is_anonymous() and g.user.is_user_confirmed():
+        return redirect(url_for('main.personal'))
     try:
         username = confirm_token(token)
     except:
@@ -83,8 +84,6 @@ def confirmation(token):
         flash('User was already confirmed, just login!')
     else:
         user.confirm()
-        # db.session.add(user)
-        # db.session.commit()
         flash("Your registration confirmed! Welcome!")
     return redirect(url_for('main.personal'))
 

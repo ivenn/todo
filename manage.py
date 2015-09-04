@@ -11,6 +11,14 @@ def create_db():
 def drop_db():
 	db.drop_all()
 
+@manager.command
+def create_admin():
+	from app.models import User
+	User.add_user(User(username='admin',
+		password='admin',
+		email='admin@toDo.com',
+		confirmed=True))
+
 
 if __name__ == "__main__":
     manager.run()
