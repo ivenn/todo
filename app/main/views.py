@@ -73,14 +73,14 @@ def login():
 
 @main.route('/confirm/<token>')
 def confirmation(token):
-    if not g.user.is_anonymous() and g.user.is_user_confirmed():
+    if not g.user.is_anonymous() and g.user.is_confirmed():
         return redirect(url_for('main.personal'))
     try:
         username = confirm_token(token)
     except:
         flash('The confirmation link us invalid or expired')
     user = User.query.filter_by(username=username).first_or_404()
-    if user.confirmed:
+    if user.is_confirmed():
         flash('User was already confirmed, just login!')
     else:
         user.confirm()

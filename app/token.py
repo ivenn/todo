@@ -13,6 +13,7 @@ def confirm_token(token, expire_time=86400):
 			token,
 			salt=app.config['SECURITY_PASSWORD_SALT'],
 			max_age=expire_time)
-	except:
+	except Exception as e:
+		print type(e), e
 		return False
 	return name

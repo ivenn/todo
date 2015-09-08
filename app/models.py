@@ -31,6 +31,9 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def is_confirmed(self):
+        return self.confirmed
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -45,10 +48,6 @@ class User(db.Model, UserMixin):
     @staticmethod
     def is_email_exists(email):
         return bool(User.query.filter_by(email=email).first())
-
-    @staticmethod
-    def is_user_confirmed(username):
-        return User.query.filter_by(username).confirmed
 
     @staticmethod
     def add_user(new_user):
