@@ -10,7 +10,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(40), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)
-    email = db.Column(db.String(40), unique=True)
+    email = db.Column(db.String(100), unique=True)
     confirmed = db.Column(db.Boolean, default=False)
 
     tasks = db.relationship('Task', backref='user')

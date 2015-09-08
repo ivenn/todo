@@ -35,7 +35,7 @@ def registration():
         html_mail = render_template('user/activate.html', confirm_url=confirm_url)
         try:
             send_email(to=form.email.data, subject='registration on toDO', template=html_mail)
-        except Exception, e:
+        except Exception as e:
             print type(e), e
             print "E-mail was not sent"
         flash("Welcome! Please, follow link from confirmation email to finish registration.")

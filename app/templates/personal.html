@@ -14,7 +14,7 @@
     {% endmacro %}
 
     <div class="main">
-        <h3>{{ g.user.username }}'s tasks:</h3>
+        <h3>{{ user.username }}'s tasks:</h3>
         <ul>
             {% for t in tasks %}
                 {{ render_task(t) }}
