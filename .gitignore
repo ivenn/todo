@@ -10,3 +10,8 @@ venv
 # IDEA or Pyhcarm projects
 .idea
 
+# sqlite db file
+db1
+
+# Mac OS specific files
+.DS_STORE

@@ -2,15 +2,16 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin
 
-from . import db, lm
+from app import db, lm
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean)
-    email = db.Column(db.String(40), unique=True)
+    is_admin = db.Column(db.Boolean, default=False)
+    email = db.Column(db.String(100), unique=True)
+    confirmed = db.Column(db.Boolean, default=False)
 
     tasks = db.relationship('Task', backref='user')
 
@@ -25,6 +26,14 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def confirm(self):
+        self.confirmed = True
+        db.session.add(self)
+        db.session.commit()
+
+    def is_confirmed(self):
+        return self.confirmed
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -35,6 +44,10 @@ class User(db.Model, UserMixin):
     @staticmethod
     def is_user_exists(username):
         return bool(User.query.filter_by(username=username).first())
+
+    @staticmethod
+    def is_email_exists(email):
+        return bool(User.query.filter_by(email=email).first())
 
     @staticmethod
     def add_user(new_user):

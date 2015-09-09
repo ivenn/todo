@@ -8,5 +8,6 @@
 {% block title %}logout{% endblock %}
 
 {% block body %}
-    {% block navbar %}{{ super() }}{% endblock%}
+    {% block navbar %}{{ super() }}{% endblock navbar %}
+    {% block flashes %}{{  super() }}{% endblock flashes %}
 {% endblock %}

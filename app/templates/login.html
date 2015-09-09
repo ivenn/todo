@@ -9,6 +9,7 @@
 
 {% block body %}
     {% block navbar %}{{ super() }}{% endblock%}
+    {% block flashes %}{{ super() }}{% endblock flashes %}
     <div class="container main">
         {{ wtf.quick_form(form) }}
         <a class="fixed-to-right" href="{{ url_for('main.registration') }}">Register</a>

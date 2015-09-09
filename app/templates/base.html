@@ -27,7 +27,7 @@
             </div>
             {% block nbright %}
                 {% if not g.user.is_authenticated() %}
-                    <<ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right">
                         <a class="navbar-brand" href="/login">login</a>
                     </ul>
                 {% else %}
@@ -47,6 +47,17 @@
        </div>
     </nav>
     {% endblock navbar %}
+        {% block flashes %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        {% endblock flashes %}
     {% endblock body %}
     </body>
 </html>

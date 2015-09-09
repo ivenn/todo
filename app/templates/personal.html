@@ -9,13 +9,12 @@
 
 {% block body %}
     {{ super() }}
-
     {% macro render_task(task) %}
         <li class='item'>{{ task.text }}{{task.state}}</li>
     {% endmacro %}
 
     <div class="main">
-        <h3>{{ username }}'s tasks:</h3>
+        <h3>{{ user.username }}'s tasks:</h3>
         <ul>
             {% for t in tasks %}
                 {{ render_task(t) }}

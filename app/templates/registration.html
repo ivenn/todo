@@ -8,7 +8,8 @@
 {% block title %}logout{% endblock %}
 
 {% block body %}
-    {% block navbar %}{{ super() }}{% endblock%}
+    {% block navbar %}{{ super() }}{% endblock navbar %}
+    {% block flashes %}{{  super() }}{% endblock flashes %}
     <div class="container main">
         {{ wtf.quick_form(form) }}
     </div>
