@@ -1,6 +1,9 @@
 # Virtual environment
 venv
 
+# TMP folder for logs
+tmp
+
 # Python pyc files
 *.py[cod]
 

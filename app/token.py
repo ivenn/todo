@@ -14,6 +14,6 @@ def confirm_token(token, expire_time=86400):
 			salt=app.config['SECURITY_PASSWORD_SALT'],
 			max_age=expire_time)
 	except Exception as e:
-		print type(e), e
+		app.logger.error("Token wasn't confirmed: %s" % str(e))
 		return False
 	return name

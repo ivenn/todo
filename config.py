@@ -10,6 +10,7 @@ class Config:
     MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '')
     MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '')
     MAIL_DEFAULT_SENDER = "no-reply@todo.com"
+    LOGS_FILE_PATH = os.sep.join(['tmp', 'logs']) + os.sep
 
     @staticmethod
     def init_app(app):

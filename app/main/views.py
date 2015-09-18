@@ -36,8 +36,8 @@ def registration():
         try:
             send_email(to=form.email.data, subject='registration on toDO', template=html_mail)
         except Exception as e:
-            print type(e), e
-            print "E-mail was not sent"
+            app.logger.error("E-mail was not sent")
+            app.logger.error("Exception: %s" % str(str(e)))
         flash("Welcome! Please, follow link from confirmation email to finish registration.")
 
         return render_template('index.html', msg='You was registered with %s username' % form.name.data)

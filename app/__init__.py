@@ -24,6 +24,32 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'main.login'
 
+# initialize logging
+log_path = app.config['LOGS_FILE_PATH']
+try:
+    os.makedirs(log_path)
+except OSError as exc:
+    if exc.errno == os.errno.EEXIST and os.path.isdir(log_path):
+        pass
+    else: raise
+
+import logging
+from logging.handlers import RotatingFileHandler
+file_handler = RotatingFileHandler(log_path + 'todolist.log', mode='a', maxBytes=1024*1024*1024, backupCount=5)
+if not app.debug:
+    file_handler.setLevel(logging.INFO)
+else:
+    file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+app.logger.addHandler(file_handler)
+if not app.debug:
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('ToDOlist startup')
+else:
+    app.logger.setLevel(logging.DEBUG)
+    app.logger.info('ToDOlist startup')
+    app.logger.debug('will be used debug log level')
+
 from app.main import main as main_blueprint
 app.register_blueprint(main_blueprint)
 
