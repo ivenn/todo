@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import Required, Length, Email, ValidationError
+from wtforms.validators import DataRequired, Length, Email, ValidationError
 
 from ..models import User
 
@@ -21,18 +21,18 @@ def validate_login_name(form, field):
 
 
 class RegistrationForm(Form):
-    name = StringField('Enter your name', validators=[Required(), Length(3, 32), validate_name])
-    password = PasswordField('Enter your password', validators=[Required(), Length(3, 32)])
-    email = StringField('Enter your email', validators=[Required(), Email(), validate_email])
+    name = StringField('Enter your name', validators=[DataRequired(), Length(3, 32), validate_name])
+    password = PasswordField('Enter your password', validators=[DataRequired(), Length(3, 32)])
+    email = StringField('Enter your email', validators=[DataRequired(), Email(), validate_email])
     submit = SubmitField('Register')
 
 
 class LoginForm(Form):
-    name = StringField('Username', validators=[Required(), validate_login_name])
-    password = PasswordField('Password', validators=[Required(),])
+    name = StringField('Username', validators=[DataRequired(), validate_login_name])
+    password = PasswordField('Password', validators=[DataRequired(),])
     submit = SubmitField('Login')
 
 
 class TaskForm(Form):
-    text = StringField('Task description', validators=[Required(),])
+    text = StringField('Task description', validators=[DataRequired(),])
     submit = SubmitField('Add')
