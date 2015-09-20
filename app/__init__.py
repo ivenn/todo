@@ -40,7 +40,8 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
 else:
     file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+file_handler.setFormatter(
+    logging.Formatter('%(asctime)s [%(levelname)5s]: %(name)s %(message)s [in %(pathname)s:%(lineno)d]'))
 app.logger.addHandler(file_handler)
 if not app.debug:
     app.logger.setLevel(logging.INFO)
@@ -49,6 +50,11 @@ else:
     app.logger.setLevel(logging.DEBUG)
     app.logger.info('ToDOlist startup')
     app.logger.debug('will be used debug log level')
+from logging import getLogger
+logger = getLogger('sqlalchemy')
+logger.setLevel(logging.ERROR)
+logger.addHandler(file_handler)
+
 
 from app.main import main as main_blueprint
 app.register_blueprint(main_blueprint)
