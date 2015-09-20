@@ -23,10 +23,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
 class TestConfig(Config):
-	DEBUG = True
-	SECRET_KEY = os.environ.get('SECRET_KEY') or 't0p s3cr3t'
-	SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db1')
+    DEBUG = True
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 't0p s3cr3t'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db1')
 
 config = {'development': DevelopmentConfig,
-		  'default': DevelopmentConfig,
-		  'test': TestConfig}
+          'default': DevelopmentConfig,
+          'test': TestConfig}
