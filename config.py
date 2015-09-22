@@ -1,4 +1,5 @@
 import os
+from logging import ERROR, DEBUG, INFO
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
@@ -11,6 +12,7 @@ class Config:
     MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '')
     MAIL_DEFAULT_SENDER = "no-reply@todo.com"
     LOGS_FILE_PATH = os.sep.join(['tmp', 'logs']) + os.sep
+    DEFAULT_LOGS_LEVEL = DEBUG
 
     @staticmethod
     def init_app(app):
