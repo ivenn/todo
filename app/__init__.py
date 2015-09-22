@@ -41,7 +41,8 @@ if not app.debug:
 else:
     file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(
-    logging.Formatter('%(asctime)s [%(levelname)5s]: %(name)s %(message)s [in %(pathname)s:%(lineno)d]'))
+    logging.Formatter('%(asctime)s [%(threadName)-8.8s] [%(levelname)-3.3s] %(name)s: %(message)s [in %(filename)s:%(lineno)d]'))
+
 app.logger.addHandler(file_handler)
 if not app.debug:
     app.logger.setLevel(logging.INFO)
