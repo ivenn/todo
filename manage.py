@@ -15,10 +15,10 @@ def drop_db():
 def create_admin():
     from app.models import User
     User.add_user(User(username='admin',
-        password='admin',
-        is_admin=True,
-        email='admin@toDo.com',
-        confirmed=True))
+                       password='admin',
+                       is_admin=True,
+                       email='admin@toDo.com',
+                       confirmed=True))
 
 
 if __name__ == "__main__":

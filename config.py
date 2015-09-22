@@ -4,12 +4,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SECURITY_PASSWORD_SALT = 'ryhn_56_nols'
-    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_SERVER = os.environ.setdefault('MAIL_SERVER', '') or 'smtp.yandex.ru'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '')
-    MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '')
-    MAIL_DEFAULT_SENDER = "no-reply@todo.com"
+    MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '') or 'todo-main@yandex.ru'
+    MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '') or '321odot'
+    MAIL_DEFAULT_SENDER = os.environ.setdefault('APP_MAIL_USERNAME', '') or MAIL_USERNAME
     LOGS_FILE_PATH = os.sep.join(['tmp', 'logs']) + os.sep
 
     @staticmethod
