@@ -6,9 +6,9 @@ from app.main import main
 from app.main.forms import RegistrationForm, LoginForm, TaskForm
 from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
-from app.utils.logging_utils import LoggingUtils
+from logging import getLogger
 
-_LOGGER = LoggingUtils.new_logger_registration('views.py')
+LOGGER = getLogger(__name__)
 
 
 @main.before_request

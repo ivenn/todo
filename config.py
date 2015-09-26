@@ -1,6 +1,6 @@
 import os
-from logging import ERROR, DEBUG, INFO
 basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -11,8 +11,8 @@ class Config:
     MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '')
     MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '')
     MAIL_DEFAULT_SENDER = "no-reply@todo.com"
-    LOGS_FILE_PATH = os.sep.join(['tmp', 'logs']) + os.sep
-    DEFAULT_LOGS_LEVEL = DEBUG
+    LOGS_FILE_PATH = os.sep.join([basedir, 'tmp', 'logs']) + os.sep
+    LOGGER_CONFIGURATION = 'LOGGER'
 
     @staticmethod
     def init_app(app):

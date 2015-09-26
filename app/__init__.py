@@ -24,8 +24,9 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'main.login'
 
-from app.utils.logging_utils import LoggingUtils
-LoggingUtils.initialize_logging()
+from logging_config import LOGGERS_FOR_USE
+import logging.config
+logging.config.dictConfig(LOGGERS_FOR_USE[app.config['LOGGER_CONFIGURATION']])
 
 from app.main import main as main_blueprint
 app.register_blueprint(main_blueprint)

@@ -1,9 +1,9 @@
 from itsdangerous import URLSafeTimedSerializer
 
 from app import app
-from app.utils.logging_utils import LoggingUtils
+from logging import getLogger
 
-_LOGGER = LoggingUtils.new_logger_registration('token.py')
+_LOGGER = getLogger(__name__)
 
 
 def generate_confiramation_token(name):
