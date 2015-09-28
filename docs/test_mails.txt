@@ -1,0 +1,14 @@
+[service-mail]
+mail: todo-main@yandex.ru
+pass: 321odot
+q: Index = 99999
+
+[user-mail-1]
+mail: todo-user1@yandex.ru
+pass: 321odot
+q: Index = 99999
+
+[user-mail-2]
+mail: todo-user2@yandex.ru
+pass: 321odot
+q: Index = 99999

@@ -29,15 +29,15 @@ def registration():
     form = RegistrationForm()
     if form.validate_on_submit():
         User.add_user(User(username=form.name.data,
-                            password=form.password.data,
-                            email=form.email.data,
-                            confirmed=False))
+                           password=form.password.data,
+                           email=form.email.data,
+                           confirmed=False))
 
         token = generate_confiramation_token(form.name.data)
         confirm_url = url_for("main.confirmation", token=token, _external=True)
         html_mail = render_template('user/activate.html', confirm_url=confirm_url)
         try:
-            send_email(to=form.email.data, subject='registration on toDO', template=html_mail)
+            send_email(to=form.email.data, subject='registration on toDo', template=html_mail)
         except Exception as e:
             _LOGGER.error("E-mail was not sent")
             _LOGGER.error("Exception: %s" % str(str(e)))
