@@ -1,6 +1,7 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SECURITY_PASSWORD_SALT = 'ryhn_56_nols'
@@ -10,7 +11,8 @@ class Config:
     MAIL_USERNAME = os.environ.setdefault('APP_MAIL_USERNAME', '') or 'todo-main@yandex.ru'
     MAIL_PASSWORD = os.environ.setdefault('APP_MAIL_PASSWORD', '') or '321odot'
     MAIL_DEFAULT_SENDER = os.environ.setdefault('APP_MAIL_USERNAME', '') or MAIL_USERNAME
-    LOGS_FILE_PATH = os.sep.join(['tmp', 'logs']) + os.sep
+    LOGS_FILE_PATH = os.sep.join([basedir, 'tmp', 'logs']) + os.sep
+    LOGGER_CONFIGURATION = 'LOGGER'
 
     @staticmethod
     def init_app(app):

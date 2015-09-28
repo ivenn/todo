@@ -6,7 +6,9 @@ from app.main import main
 from app.main.forms import RegistrationForm, LoginForm, TaskForm
 from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
-from app import logger as app_logger
+from logging import getLogger
+
+LOGGER = getLogger(__name__)
 
 
 @main.before_request
@@ -37,8 +39,8 @@ def registration():
         try:
             send_email(to=form.email.data, subject='registration on toDo', template=html_mail)
         except Exception as e:
-            app_logger.error("E-mail was not sent")
-            app_logger.error("Exception: %s" % str(str(e)))
+            _LOGGER.error("E-mail was not sent")
+            _LOGGER.error("Exception: %s" % str(str(e)))
         flash("Welcome! Please, follow link from confirmation email to finish registration.")
 
         return render_template('index.html', msg='You was registered with %s username' % form.name.data)
