@@ -1,6 +1,7 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, SelectField
 from wtforms.validators import DataRequired, Length, Email, ValidationError
+from werkzeug.datastructures import MultiDict
 
 from ..models import User
 
@@ -33,6 +34,14 @@ class LoginForm(Form):
     submit = SubmitField('Login')
 
 
+class TaskListForm(Form):
+    name = StringField('Task list name', validators=[DataRequired(),])
+    description = StringField('Task list description', validators=[])
+    submit = SubmitField('Add task list')
+
+
 class TaskForm(Form):
-    text = StringField('Task description', validators=[DataRequired(),])
-    submit = SubmitField('Add')
+    name = StringField('Task name', validators=[DataRequired(),])
+    description = StringField('Task description', validators=[DataRequired(),])
+    submit = SubmitField('Add task')
+
