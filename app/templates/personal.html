@@ -12,13 +12,13 @@
 
     {% macro render_task(task) %}
         <li class='item'>
-            {{ task.name }} --- {{ task.state }}
+            {{ task.name }} - {{ task.state }} - <a href="{{ url_for('main.delete_task', list_id=task_list.id, task_id=task.id) }}">delete</a>
         </li>
     {% endmacro %}
 
     {% macro render_task_list(tl) %}
         <li class='item'>
-            <a href="{{ url_for('main.user_lists', id=tl.id) }}">{{ tl.name }}</a>
+            <a href="{{ url_for('main.user_lists', list_id=tl.id) }}">{{ tl.name }}</a>
         </li>
     {% endmacro %}
 

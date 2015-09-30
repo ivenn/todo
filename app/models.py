@@ -63,8 +63,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def get_task_lists(self):
-        res = TaskList.query.filter(TaskList.users.any(id=self.id)).all()
-        return res
+        return TaskList.query.filter(TaskList.users.any(id=self.id)).all()
 
 
 @lm.user_loader
@@ -79,7 +78,7 @@ class TaskList(db.Model):
     description = db.Column(db.String(1024))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    tasks = db.relationship('Task', backref='tasklist')
+    tasks = db.relationship('Task', backref='tasklist', cascade="all, delete-orphan")
     users = db.relationship('User', secondary=user_tasklist, backref='tasklist')
 
     name_author_constraint = db.UniqueConstraint('name', 'author_id', name='unique_tlname_tlauthor')
@@ -89,6 +88,10 @@ class TaskList(db.Model):
     def add_task_list(user, new_task_list):
         user.tasklists.append(new_task_list)
         db.session.add(user)
+        db.session.commit()
+
+    def delete_task(self, task):
+        self.tasks.remove(task)
         db.session.commit()
 
 

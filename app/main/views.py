@@ -57,6 +57,8 @@ def personal():
         TaskList.add_task_list(g.user, TaskList(name=tlform.name.data, 
                                                 description=tlform.description.data, 
                                                 author_id=g.user.id))
+        flash('Task %s was added successfully' % tform.name.data)
+        return redirect(url_for('main.personal'))
     return render_template('personal.html', 
                            user=g.user,
                            task_list=None,
@@ -65,12 +67,13 @@ def personal():
                            tform=None, tlform=tlform)
 
 
-@main.route('/personal/lists/<id>', methods=['GET', 'POST'])
+@main.route('/personal/list/<list_id>', methods=['GET', 'POST'])
 @login_required
-def user_lists(id):
+def user_lists(list_id):
     tform = TaskForm()
-    tlist = TaskList.query.filter_by(id=int(id)).first()
+    tlist = TaskList.query.filter_by(id=int(list_id)).first()
 
+    # check if list exists and user has access to it
     if not tlist or tlist.id not in [int(tl.id) for tl in g.user.get_task_lists()]:
         abort(404)
 
@@ -79,14 +82,28 @@ def user_lists(id):
                            state=Task.TASK_STATE_OPEN,
                            user_id=g.user.id), 
                       task_list=tlist)
-        return redirect(url_for('main.user_lists', id=id))
+        flash('Task %s was added successfully' % tform.name.data)
+        return redirect(url_for('main.user_lists', id=list_id))
 
     return render_template('personal.html',
                            user=g.user,
                            task_list=tlist,
-                           tasks=Task.query.filter_by(tasklist_id=id),
+                           tasks=Task.query.filter_by(tasklist_id=list_id).all(),
                            task_lists=[],
                            tform=tform, tlform=None)
+
+@main.route('/personal/list/<list_id>/task/delete/<task_id>', methods=['GET'])
+@login_required
+def delete_task(list_id, task_id):
+    tlist = TaskList.query.filter_by(id=int(list_id)).first()
+    t = Task.query.filter_by(id=task_id).first()
+    # check if list exists and user has access to it
+    if not tlist or not t or tlist.id not in [int(tl.id) for tl in g.user.get_task_lists()]:
+        abort(404)
+
+    tlist.delete_task(t)
+    flash('Task %s was deleted' %t.name)
+    return redirect(url_for('main.user_lists', list_id=list_id))
 
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -122,6 +139,7 @@ def confirmation(token):
         user.confirm()
         flash("Your registration confirmed! Welcome!")
     return redirect(url_for('main.personal'))
+
 
 @main.route('/logout')
 @login_required

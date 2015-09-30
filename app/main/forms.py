@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, SubmitField, PasswordField, SelectField
-from wtforms.validators import DataRequired, Length, Email, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, DateField
+from wtforms.validators import DataRequired, Length, Email, Optional, ValidationError
 from werkzeug.datastructures import MultiDict
 
 from ..models import User
@@ -43,5 +43,6 @@ class TaskListForm(Form):
 class TaskForm(Form):
     name = StringField('Task name', validators=[DataRequired(),])
     description = StringField('Task description', validators=[DataRequired(),])
+    #due_date = DateField('Due Date', format='%m/%d/%Y', validators=(Optional(),))
     submit = SubmitField('Add task')
 
