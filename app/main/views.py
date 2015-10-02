@@ -55,10 +55,13 @@ def personal():
     tlform = TaskListForm()
 
     if tlform.validate_on_submit():
-        g.user.create_list(TaskList(name=tlform.name.data, 
+        res = g.user.create_list(TaskList(name=tlform.name.data, 
                                     description=tlform.description.data, 
                                     author_id=g.user.id))
-        flash('Task List %s was added successfully' % tlform.name.data, 'success')
+        if not err:
+            flash('Task List %s was added successfully' % tlform.name.data, 'success')
+        else:
+            flash(err, 'warning')
         return redirect(url_for('main.personal'))
     return render_template('personal.html', 
                            user=g.user,
@@ -80,11 +83,13 @@ def user_lists(list_id):
         abort(404)
 
     if tform.validate_on_submit():
-        Task.add_task(Task(name=tform.name.data,
-                           state=Task.TASK_STATE_OPEN,
-                           user_id=g.user.id), 
-                      task_list=tlist)
-        flash('Task %s was added successfully' % tform.name.data, 'success')
+        err = tlist.add_task(Task(name=tform.name.data,
+                                  state=Task.TASK_STATE_OPEN,
+                                  user_id=g.user.id))
+        if not err:
+            flash('Task %s was added successfully' % tform.name.data, 'success')
+        else:
+            flash(err, 'warning')
         return redirect(url_for('main.user_lists', list_id=list_id))
 
     return render_template('personal.html',
@@ -119,10 +124,11 @@ def subscribe_user_to_list(list_id):
     sform = SubscribeForm()
     if sform.validate_on_submit():
         u = User.query.filter_by(username=sform.subscriber.data,).first()
-        if g.user.subscribe_user_to_list(u, tlist):
+        err = g.user.subscribe_user_to_list(u, tlist)
+        if not err:
             flash("You subscribed %s to Task List '%s'" % (u.username, tlist.name), 'success')
         else:
-            flash("User %s is already subscribed to %s list" % (u.username, tlist.name), 'warning')
+            flash(err, 'warning')
             return redirect(url_for('main.subscribe_user_to_list', list_id=list_id))
         return redirect(url_for('main.personal'))
 

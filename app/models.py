@@ -66,16 +66,18 @@ class User(db.Model, UserMixin):
         return TaskList.query.filter(TaskList.users.any(id=self.id)).all()
 
     def create_list(self, new_task_list):
+        if new_task_list.name in [tl.name for tl in self.tasklists]:
+            return "Task list %s already exists" % new_task_list.name
         self.tasklists.append(new_task_list)
         db.session.add(self)
         db.session.commit()
 
     def subscribe_user_to_list(self, user, task_list):
-        if task_list not in user.tasklists:
-            user.tasklists.append(task_list)
-            db.session.add(user)
-            db.session.commit()
-            return True
+        if task_list in user.tasklists:
+            return "User %s is already subscribed to %s list" % (user.username, task_list.name)
+        user.tasklists.append(task_list)
+        db.session.add(user)
+        db.session.commit()
 
     def unsubscribe_from_list(self, task_list):
         self.tasklists.remove(task_list)
@@ -105,6 +107,14 @@ class TaskList(db.Model):
     name_author_constraint = db.UniqueConstraint('name', 'author_id', name='unique_tlname_tlauthor')
     __table_args__ = (name_author_constraint,)
 
+
+    def add_task(self, new_task):
+        if new_task.name in [t.name for t in self.tasks]:
+            return "Task list %s already has task with name '%s'" % (self.name, new_task.name)
+        self.tasks.append(new_task)
+        db.session.add(self)
+        db.session.commit()
+
     def delete_task(self, task):
         self.tasks.remove(task)
         db.session.commit()
@@ -129,12 +139,6 @@ class Task(db.Model):
 
     def __repr__(self):
         return '<Task %r: %s>' % (self.name, self.description)
-
-    @staticmethod
-    def add_task(new_task, task_list):
-        task_list.tasks.append(new_task)
-        db.session.add(task_list)
-        db.session.commit()
 
     def update_state(self, state):
         if state not in Task.TASK_STATES:
