@@ -3,9 +3,10 @@ from flask.ext.login import login_user, logout_user, login_required, current_use
 
 from app.models import User, Task, TaskList
 from app.main import main
-from app.main.forms import RegistrationForm, LoginForm, TaskForm, TaskListForm
+from app.main.forms import RegistrationForm, LoginForm, TaskForm, TaskListForm, SubscribeForm
 from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
+
 from logging import getLogger
 
 _LOGGER = getLogger(__name__)
