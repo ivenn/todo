@@ -8,7 +8,7 @@ from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
 from logging import getLogger
 
-LOGGER = getLogger(__name__)
+_LOGGER = getLogger(__name__)
 
 
 @main.before_request
@@ -42,7 +42,7 @@ def registration():
         except Exception as e:
             _LOGGER.error("E-mail was not sent")
             _LOGGER.error("Exception: %s" % str(str(e)))
-        flash("Welcome! Please, follow link from confirmation email to finish registration.")
+        flash("Welcome! Please, follow link from confirmation email to finish registration.", 'info')
 
         return redirect(url_for('main.login'))
     return render_template('registration.html', form=form)
@@ -57,7 +57,7 @@ def personal():
         TaskList.add_task_list(g.user, TaskList(name=tlform.name.data, 
                                                 description=tlform.description.data, 
                                                 author_id=g.user.id))
-        flash('Task %s was added successfully' % tform.name.data)
+        flash('Task %s was added successfully' % tlform.name.data, 'success')
         return redirect(url_for('main.personal'))
     return render_template('personal.html', 
                            user=g.user,
@@ -82,7 +82,7 @@ def user_lists(list_id):
                            state=Task.TASK_STATE_OPEN,
                            user_id=g.user.id), 
                       task_list=tlist)
-        flash('Task %s was added successfully' % tform.name.data)
+        flash('Task %s was added successfully' % tform.name.data, 'success')
         return redirect(url_for('main.user_lists', id=list_id))
 
     return render_template('personal.html',
@@ -102,7 +102,7 @@ def delete_task(list_id, task_id):
         abort(404)
 
     tlist.delete_task(t)
-    flash('Task %s was deleted' %t.name)
+    flash('Task %s was deleted' % t.name, 'success')
     return redirect(url_for('main.user_lists', list_id=list_id))
 
 
@@ -117,7 +117,7 @@ def login():
         if user.verify_password(form.password.data):
             login_user(user)
             if not user.confirmed:
-                flash('You registration is not finished, please, confirm your accout by link from email')
+                flash('You registration is not finished, please, confirm your accout by link from email', 'info')
             return redirect(url_for('main.personal'))
         else:
             form.password.errors.append('Invalid password')
@@ -130,14 +130,16 @@ def confirmation(token):
         return redirect(url_for('main.personal'))
     try:
         username = confirm_token(token)
-    except:
-        flash('The confirmation link us invalid or expired')
+    except Exception as e:
+        _LOGGER.error("Token wasn't confirmed: %s" % str(e))
+        flash('The confirmation link is invalid or expired', 'danger')
+        return redirect(url_for('main.login'))
     user = User.query.filter_by(username=username).first_or_404()
     if user.is_confirmed():
-        flash('User was already confirmed, just login!')
+        flash('User was already confirmed, just login!', 'warning')
     else:
         user.confirm()
-        flash("Your registration confirmed! Welcome!")
+        flash("Your registration confirmed! Welcome!", 'success')
     return redirect(url_for('main.personal'))
 
 

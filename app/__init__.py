@@ -23,6 +23,7 @@ db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'main.login'
+lm.login_message_category = "info"
 
 from logging_config import LOGGERS_FOR_USE
 import logging.config
