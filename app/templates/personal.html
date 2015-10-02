@@ -11,29 +11,61 @@
     {{ super() }}
 
     {% macro render_task(task) %}
-        <li class='item'>
-            {{ task.name }} - {{ task.state }} - <a href="{{ url_for('main.delete_task', list_id=task_list.id, task_id=task.id) }}">delete</a>
+        <li>
+            <table class='table table-condensed bg-info'>
+                <tr>
+                    <td>
+                        <p class="btn btn-primary" role="link">{{ task.name }}</p>
+                        <div class="btn-group">
+                          <button class="btn btn-primary btn-group dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ task.state }} <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                                {% for state in task.TASK_STATES %}
+                                    <li><a class="btn btn-default" href="{{ url_for('main.task_state', list_id=task_list.id, task_id=task.id, state=state) }}">{{ state }}</a></li>
+                                {% endfor %}
+                          </ul>
+                        </div>
+                    </td>
+                    <td align="right">
+                        <a class="btn btn-default" href="{{ url_for('main.delete_task', list_id=task_list.id, task_id=task.id) }}">delete</a>
+                    </td>
+                </tr>
+            </table>
         </li>
     {% endmacro %}
 
     {% macro render_task_list(tl) %}
-        <li class='item'>
-            <a href="{{ url_for('main.user_lists', list_id=tl.id) }}">{{ tl.name }}</a>
+        <li>
+            <table class='table table-condensed bg-info'>
+                <tr>
+                    <td><a class="btn btn-success" href="{{ url_for('main.user_lists', list_id=tl.id) }}">{{ tl.name }}</a>
+                    </td>
+                    <td align="right">
+                        <a class="btn btn-default" href="{{ url_for('main.unsubscribe_from_list', list_id=tl.id) }}">unsubscribe</a>
+                          <a class="btn btn-default" href="{{url_for('main.subscribe_user_to_list', list_id=tl.id) }}">subscribe user to</a>
+                    </td>
+                </tr>
+            </table>
         </li>
     {% endmacro %}
 
-    {% if tasks %}
+    {% if task_list %}
     <div class="main">
-        <h3>'{{ task_list.name }}' tasks:</h3>
+        <a class="btn btn-success btn-lg btn-block" href="{{ url_for('main.personal') }}"> {{ task_list.name }}</a><br>
+        {% for u in task_list.users %}
+            <a class="btn btn-warning">{{ u.username }}</a>
+        {% endfor %}
+        <br><br>
         <ul>
-            {% for t in tasks %}
+            {% for t in task_list.tasks %}
                 {{ render_task(t) }}
             {% endfor %}
         </ul>
     </div>
     {% endif %}
 
-    {% if task_lists %}
+    {% if task_lists != None %}
     <div class="main">
         <h3>{{ user.username }}'s task lists:</h3>
         <ul>
@@ -44,16 +76,12 @@
     </div>
     {% endif %}
 
-    {% if tform %}
-        <div class="container main">
-            {{ wtf.quick_form(tform) }}
-        </div>
-    {% endif %}    
-
-    {% if tlform %}
-        <div class="container main">
-            {{ wtf.quick_form(tlform) }}
-        </div>
-    {% endif %}    
+    {% for form in [tform, tlform, sform] %}
+        {% if form %}
+            <div class="main">
+                {{ wtf.quick_form(form) }}
+            </div>
+        {% endif %} 
+    {% endfor %}
 
 {% endblock body %}

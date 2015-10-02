@@ -9,11 +9,6 @@
     border: solid 1px black;
 }
 
-.fixed-to-right{
-    position: absolute;
-    right: 0;
-}
-
 .item-done{
     background: #00FF00
 }

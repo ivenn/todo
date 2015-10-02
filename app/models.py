@@ -65,6 +65,27 @@ class User(db.Model, UserMixin):
     def get_task_lists(self):
         return TaskList.query.filter(TaskList.users.any(id=self.id)).all()
 
+    def create_list(self, new_task_list):
+        self.tasklists.append(new_task_list)
+        db.session.add(self)
+        db.session.commit()
+
+    def subscribe_user_to_list(self, user, task_list):
+        if task_list not in user.tasklists:
+            user.tasklists.append(task_list)
+            db.session.add(user)
+            db.session.commit()
+            return True
+
+    def unsubscribe_from_list(self, task_list):
+        self.tasklists.remove(task_list)
+        db.session.add(self)
+        db.session.commit()
+
+        if not task_list.users:
+            db.session.delete(task_list)
+            db.session.commit()
+
 
 @lm.user_loader
 def load_user(userid):
@@ -83,12 +104,6 @@ class TaskList(db.Model):
 
     name_author_constraint = db.UniqueConstraint('name', 'author_id', name='unique_tlname_tlauthor')
     __table_args__ = (name_author_constraint,)
-
-    @staticmethod
-    def add_task_list(user, new_task_list):
-        user.tasklists.append(new_task_list)
-        db.session.add(user)
-        db.session.commit()
 
     def delete_task(self, task):
         self.tasks.remove(task)
@@ -121,5 +136,11 @@ class Task(db.Model):
         db.session.add(task_list)
         db.session.commit()
 
+    def update_state(self, state):
+        if state not in Task.TASK_STATES:
+            raise Exception('Not valid state to update')
+        self.state = state
+        db.session.add(self)
+        db.session.commit()
 
 

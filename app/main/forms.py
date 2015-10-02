@@ -12,6 +12,10 @@ def validate_name(form, field):
     if User.is_user_exists(field.data):
         raise ValidationError("Username is not unique")
 
+def validate_subscriber(form, field):
+    if not User.is_user_exists(field.data):
+        raise ValidationError("No such user")
+
 def validate_email(form, field):
     if User.is_email_exists(field.data):
         raise ValidationError("Email is not unique")
@@ -36,13 +40,18 @@ class LoginForm(Form):
 
 class TaskListForm(Form):
     name = StringField('Task list name', validators=[DataRequired(),])
-    description = StringField('Task list description', validators=[])
+    description = StringField('Task list description', validators=[Optional()])
     submit = SubmitField('Add task list')
+
+
+class SubscribeForm(Form):
+    subscriber = StringField('User to subscribe', validators=[DataRequired(), validate_subscriber])
+    submit = SubmitField('Subscribe')
 
 
 class TaskForm(Form):
     name = StringField('Task name', validators=[DataRequired(),])
-    description = StringField('Task description', validators=[DataRequired(),])
+    description = StringField('Task description', validators=[Optional()])
     #due_date = DateField('Due Date', format='%m/%d/%Y', validators=(Optional(),))
     submit = SubmitField('Add task')
 
