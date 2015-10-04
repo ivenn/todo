@@ -1,7 +1,11 @@
 from app import db, app
 from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 
 manager = Manager(app)
+migrate = Migrate(app, db)
+
+manager.add_command('db', MigrateCommand)
 
 @manager.command
 def create_db():
