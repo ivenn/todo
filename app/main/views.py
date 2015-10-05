@@ -55,9 +55,9 @@ def personal():
     tlform = TaskListForm()
 
     if tlform.validate_on_submit():
-        res = g.user.create_list(TaskList(name=tlform.name.data, 
-                                    description=tlform.description.data, 
-                                    author_id=g.user.id))
+        err = g.user.create_list(TaskList(name=tlform.name.data, 
+                                          description=tlform.description.data, 
+                                          author_id=g.user.id))
         if not err:
             flash('Task List %s was added successfully' % tlform.name.data, 'success')
         else:
