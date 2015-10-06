@@ -1,4 +1,4 @@
-from flask import session, redirect, url_for, escape, request, render_template, g, flash, abort
+from flask import session, redirect, url_for, escape, request, render_template, g, flash, abort, jsonify, make_response
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
 from app.models import User, Task, TaskList
@@ -216,3 +216,26 @@ def logout():
 @login_required
 def settings():
     return render_template('settings.html', user=g.user)
+
+@main.route('/api/1/login', methods=['POST'])
+def rest_login():
+    print "Rest login are called"
+    print request.json
+    if not request.json or 'username' not in request.json or 'password' not in request.json:
+        return make_response(jsonify({'error': 'wrong request'}),404)
+
+    user = User.query.filter_by(username=request.json['username']).first()
+    print "stage 10"
+    if user.verify_password(request.json['password']):
+        print "stage verpwd"
+        login_user(user)
+        if not user.confirmed:
+            return make_response(
+                    jsonify({'error':
+                                 'You registration is not finished, please, confirm your accout by link from email'}),
+                    404)
+        return make_response(jsonify({}),204)
+    else:
+        return make_response(
+                    jsonify({'error': 'Invalid password'}),
+                    404)
