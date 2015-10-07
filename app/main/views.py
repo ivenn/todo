@@ -219,15 +219,11 @@ def settings():
 
 @main.route('/api/1/login', methods=['POST'])
 def rest_login():
-    print "Rest login are called"
-    print request.json
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}),404)
 
     user = User.query.filter_by(username=request.json['username']).first()
-    print "stage 10"
     if user.verify_password(request.json['password']):
-        print "stage verpwd"
         login_user(user)
         if not user.confirmed:
             return make_response(
