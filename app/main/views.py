@@ -1,4 +1,4 @@
-from flask import session, redirect, url_for, escape, request, render_template, g, flash, abort, jsonify, make_response
+from flask import session, redirect, url_for, escape, request, render_template, g, flash, abort
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
 from app.models import User, Task, TaskList
@@ -6,13 +6,10 @@ from app.main import main
 from app.main.forms import RegistrationForm, LoginForm, TaskForm, TaskListForm, SubscribeForm
 from app.token import generate_confiramation_token, confirm_token
 from app.email_sender import send_email
-from flask_httpauth import HTTPBasicAuth
 
 from logging import getLogger
 
 _LOGGER = getLogger(__name__)
-
-auth = HTTPBasicAuth()
 
 @main.before_request
 def before_request():
@@ -217,39 +214,3 @@ def logout():
 @login_required
 def settings():
     return render_template('settings.html', user=g.user)
-
-
-# Rest part
-@auth.verify_password
-def verify_password(token, username=None):
-    "Username are not used in this case, becouse we are use token based authentication"
-    user = User.verify_auth_token(token)
-    session_token = session['auth_token'] if 'auth_token' in session else None
-    if session_token and session_token == token and user:
-        return True
-    return False
-
-
-@main.route('/api/1.0/login', methods=['POST'])
-def rest_login():
-    if not request.json or 'username' not in request.json or 'password' not in request.json:
-        return make_response(jsonify({'error': 'wrong request'}), 404)
-
-    user = User.query.filter_by(username=request.json['username']).first()
-    if user.verify_password(request.json['password']):
-        login_user(user)
-        if not user.confirmed:
-            return make_response(
-                jsonify({'error':
-                             'You registration is not finished, please, confirm your accout by link from email'}),
-                404)
-        session['auth_token'] = g.user.generate_auth_token().decode('ascii')
-        return make_response(jsonify({'auth_token': session['auth_token']}), 200)
-    else:
-        return make_response(jsonify({'error': 'Invalid password'}), 404)
-
-@main.route('/api/1.0/logout', methods=['POST'])
-@auth.login_required
-def rest_logout():
-    session['auth_token'] = None
-    return make_response(jsonify({}), 204)
