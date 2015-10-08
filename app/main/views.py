@@ -221,15 +221,16 @@ def settings():
 
 # Rest part
 @auth.verify_password
-def verify_password(token, username):
-    # first try to authenticate by token
+def verify_password(token, username=None):
+    "Username are not used in this case, becouse we are use token based authentication"
     user = User.verify_auth_token(token)
-    if hasattr(g, 'auth_token') and g.auth_token and g.auth_token == token and user:
+    session_token = session['auth_token'] if 'auth_token' in session else None
+    if session_token and session_token == token and user:
         return True
     return False
 
 
-@main.route('/api/1/login', methods=['POST'])
+@main.route('/api/1.0/login', methods=['POST'])
 def rest_login():
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}), 404)
@@ -242,13 +243,13 @@ def rest_login():
                 jsonify({'error':
                              'You registration is not finished, please, confirm your accout by link from email'}),
                 404)
-        g.auth_token = g.user.generate_auth_token().decode('ascii')
-        return make_response(jsonify({'auth_token': g.auth_token}), 200)
+        session['auth_token'] = g.user.generate_auth_token().decode('ascii')
+        return make_response(jsonify({'auth_token': session['auth_token']}), 200)
     else:
         return make_response(jsonify({'error': 'Invalid password'}), 404)
 
-@main.route('/api/1/logout', methods=['POST'])
+@main.route('/api/1.0/logout', methods=['POST'])
 @auth.login_required
 def rest_logout():
-    g.auth_token = None
-    return make_response(None, 204)
+    session['auth_token'] = None
+    return make_response(jsonify({}), 204)
