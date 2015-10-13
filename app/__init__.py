@@ -33,7 +33,7 @@ logging.config.dictConfig(LOGGERS_FOR_USE[app.config['LOGGER_CONFIGURATION']])
 # register blueprints
 from app.main import main as main_blueprint
 app.register_blueprint(main_blueprint)
-from app.rest import rest as rest_blueprint
-app.register_blueprint(rest_blueprint)
+from app.api_1 import api_1 as api_1_blueprint
+app.register_blueprint(api_1_blueprint)
 
 from models import User, Task

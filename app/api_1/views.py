@@ -2,7 +2,7 @@ from flask import jsonify, make_response, session, request, g
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from flask_httpauth import HTTPBasicAuth
 
-from app.rest import rest
+from app.api_1 import api_1 as api
 from app.models import User, Task, TaskList
 
 from logging import getLogger
@@ -11,7 +11,7 @@ _LOGGER = getLogger("rest_" + __name__)
 
 auth = HTTPBasicAuth()
 
-@rest.before_request
+@api.before_request
 def before_request():
     g.user = current_user
 
@@ -25,8 +25,8 @@ def verify_password(token, username=None):
     return False
 
 
-@rest.route('/api/1.0/login', methods=['POST'])
-def rest_login():
+@api.route('/api/1.0/login', methods=['POST'])
+def login():
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}), 404)
 
@@ -44,7 +44,7 @@ def rest_login():
         return make_response(jsonify({'error': 'Invalid password'}), 404)
 
 
-@rest.route('/api/1.0/logout', methods=['POST'])
+@api.route('/api/1.0/logout', methods=['POST'])
 @auth.login_required
 def rest_logout():
     session['auth_token'] = None
