@@ -1,8 +1,9 @@
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
-from app import db, lm
+from app import db, lm, app
 
 
 user_tasklist = db.Table('user_tasklist',
@@ -87,6 +88,22 @@ class User(db.Model, UserMixin):
         if not task_list.users:
             db.session.delete(task_list)
             db.session.commit()
+
+    def generate_auth_token(self, expiration=36000):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
 
 
 @lm.user_loader
