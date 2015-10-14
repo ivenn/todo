@@ -5,35 +5,41 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
+from config import config, log_dir
 
-from config import config
 
-# initialize application
-app = Flask(__name__)
-app.config.from_object(config[os.environ.setdefault('APP_SETTINGS', 'default')])
-
-# initialize extentions
 bootstrap = Bootstrap()
-bootstrap.init_app(app)
 moment = Moment()
-moment.init_app(app)
 mail = Mail()
-mail.init_app(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 lm = LoginManager()
-lm.init_app(app)
 lm.login_view = 'main.login'
 lm.login_message_category = "info"
 
-# initialize base loggers configuration
-from logging_config import LOGGERS_FOR_USE
-import logging.config
-logging.config.dictConfig(LOGGERS_FOR_USE[app.config['LOGGER_CONFIGURATION']])
 
-# register blueprints
-from app.main import main as main_blueprint
-app.register_blueprint(main_blueprint)
-from app.api_1 import api_1 as api_1_blueprint
-app.register_blueprint(api_1_blueprint)
+def create_app(config_name):
+    # initialize application
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
 
-from models import User, Task
+    # initialize extentions
+    bootstrap.init_app(app)
+    moment.init_app(app)
+    db.init_app(app)
+    mail.init_app(app)
+    lm.init_app(app)
+
+    # initialize base loggers configuration
+    from logging_config import LOGGERS
+    import logging.config
+    if not os.path.isdir(log_dir):
+        os.makedirs(log_dir)
+    logging.config.dictConfig(LOGGERS[app.config['LOGGER_CONFIG']])
+
+    # register blueprints
+    from app.main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+    from app.api_1 import api_1 as api_1_blueprint
+    app.register_blueprint(api_1_blueprint)
+
+    return app

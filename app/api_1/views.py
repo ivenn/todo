@@ -46,7 +46,7 @@ def login():
 
 @api.route('/api/1.0/logout', methods=['POST'])
 @auth.login_required
-def rest_logout():
+def logout():
     session['auth_token'] = None
     logout_user()
     return make_response(jsonify({}), 204)

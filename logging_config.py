@@ -1,9 +1,5 @@
-import os
-from app import app
-
-log_path = app.config['LOGS_FILE_PATH']
-if not os.path.isdir(log_path):
-    os.makedirs(log_path)
+import os.path
+from config import log_dir
 
 LOGGER = {
         "version": 1,
@@ -27,7 +23,7 @@ LOGGER = {
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "DEBUG",
                 "formatter": "verbose",
-                "filename": str(log_path) + "todolist.log",
+                "filename": os.path.join(log_dir, 'todo.log'),
                 "maxBytes": 1024*1024*1024,
                 "backupCount": 5,
                 "encoding": "utf8"
@@ -48,4 +44,4 @@ LOGGER = {
         }
 }
 
-LOGGERS_FOR_USE = {"LOGGER": LOGGER}
+LOGGERS = {"LOGGER": LOGGER}
