@@ -19,14 +19,15 @@ def before_request():
 def verify_password(token, username=None):
     "Username are not used in this case, becouse we are use token based authentication"
     user = User.verify_auth_token(token)
-    session_token = session['auth_token'] if 'auth_token' in session else None
+    session_token = session['token'] if 'auth_token' in session else None
     if session_token and session_token == token and user:
         return True
     return False
 
 
-@api.route('/api/1.0/login', methods=['POST'])
-def login():
+@api.route('/token', methods=['GET','POST'])
+def get_token():
+    _LOGGER.info(request.json)
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}), 404)
 
@@ -34,19 +35,22 @@ def login():
     if user.verify_password(request.json['password']):
         login_user(user)
         if not user.confirmed:
-            return make_response(
-                jsonify({'error':
-                             'You registration is not finished, please, confirm your accout by link from email'}),
-                404)
-        session['auth_token'] = g.user.generate_auth_token().decode('ascii')
-        return make_response(jsonify({'auth_token': session['auth_token']}), 200)
+            return make_response(jsonify({'error':'You registration is not confirmed'}), 404)
+        session['token'] = g.user.generate_auth_token().decode('ascii')
+        return make_response(jsonify({'token': session['token']}), 200)
     else:
         return make_response(jsonify({'error': 'Invalid password'}), 404)
 
 
-@api.route('/api/1.0/logout', methods=['POST'])
+@api.route('/logout', methods=['POST'])
 @auth.login_required
 def logout():
     session['auth_token'] = None
     logout_user()
     return make_response(jsonify({}), 204)
+
+
+@api.route('/test', methods=['POST'])
+@auth.login_required
+def test():
+    return jsonify({ 'data': 'Hello, %s!' % g.user.username })

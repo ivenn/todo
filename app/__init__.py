@@ -40,6 +40,6 @@ def create_app(config_name):
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
     from app.api_1 import api_1 as api_1_blueprint
-    app.register_blueprint(api_1_blueprint)
+    app.register_blueprint(api_1_blueprint, url_prefix='/api/1.0')
 
     return app
