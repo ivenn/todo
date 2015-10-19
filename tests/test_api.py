@@ -42,7 +42,7 @@ class APITestCase(unittest.TestCase):
         #print response.status_code
 
         response = self.client.get(url_for('api_1.get_token'), 
-                                   data={'username':'test', 'password':'test'},
+                                   data=json.dumps({'username':'test', 'password':'test'}),
                                    content_type='application/json')
         print response
         json_response = json.loads(response.data)
