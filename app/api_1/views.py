@@ -7,7 +7,7 @@ from app.models import User, Task, TaskList
 
 from logging import getLogger
 
-_LOGGER = getLogger("rest_" + __name__)
+_LOGGER = getLogger("restV1_" + __name__)
 
 auth = HTTPBasicAuth()
 
@@ -19,15 +19,14 @@ def before_request():
 def verify_password(token, username=None):
     "Username are not used in this case, becouse we are use token based authentication"
     user = User.verify_auth_token(token)
-    session_token = session['token'] if 'auth_token' in session else None
+    session_token = session['auth_token'] if 'auth_token' in session else None
     if session_token and session_token == token and user:
         return True
     return False
 
 
-@api.route('/token', methods=['GET','POST'])
-def get_token():
-    _LOGGER.info(request.json)
+@api.route('/login', methods=['POST'])
+def login():
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}), 404)
 
@@ -35,9 +34,9 @@ def get_token():
     if user.verify_password(request.json['password']):
         login_user(user)
         if not user.confirmed:
-            return make_response(jsonify({'error':'You registration is not confirmed'}), 404)
-        session['token'] = g.user.generate_auth_token().decode('ascii')
-        return make_response(jsonify({'token': session['token']}), 200)
+            return make_response(jsonify({'error': 'You registration is not confirmed'}), 404)
+        session['auth_token'] = g.user.generate_auth_token().decode('ascii')
+        return make_response(jsonify({'auth_token': session['auth_token']}), 200)
     else:
         return make_response(jsonify({'error': 'Invalid password'}), 404)
 

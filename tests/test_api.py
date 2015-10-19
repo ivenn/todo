@@ -22,8 +22,8 @@ class APITestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def get_api_headers(self, username, password):
-        return {'Authorization': username + ':' + password,
+    def get_api_headers(self, token):
+        return {'Authorization': token + ':' + None,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 
@@ -41,11 +41,12 @@ class APITestCase(unittest.TestCase):
         #                           headers=self.get_api_headers('bad-token', ''))
         #print response.status_code
 
-        response = self.client.get(url_for('api_1.get_token'), 
-                                   data=json.dumps({'username':'test', 'password':'test'}),
+        response = self.client.post(url_for('api_1.login'),
+                                   data=json.dumps({'username': 'test', 'password': 'test'}),
                                    content_type='application/json')
         print response
         json_response = json.loads(response.data)
-        self.assertIsNotNone(json_response.get('token'))
-        token = json_response['token']
+        self.assertIsNotNone(json_response.get('auth_token'))
+        self.assertIsNotNone(response.headers[2])
+        token = json_response['auth_token']
 
