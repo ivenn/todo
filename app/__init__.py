@@ -6,6 +6,7 @@ from flask.ext.moment import Moment
 from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
 from config import config, log_dir
+from mycache import MyCache
 
 
 bootstrap = Bootstrap()
@@ -15,6 +16,7 @@ db = SQLAlchemy()
 lm = LoginManager()
 lm.login_view = 'main.login'
 lm.login_message_category = "info"
+cache = MyCache("todo.db", False)
 
 
 def create_app(config_name):

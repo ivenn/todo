@@ -2,7 +2,7 @@ import unittest
 import json
 from flask import url_for
 from base64 import b64encode
-from app import create_app, db
+from app import create_app, db, cache
 
 
 class APITestCase(unittest.TestCase):
@@ -48,5 +48,5 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.data)
         self.assertIsNotNone(json_response.get('auth_token'))
         self.assertIsNotNone(response.headers[2])
-        token = json_response['auth_token']
+        self.assertEqual(cache.get(json_response['auth_token']), User.query.filter_by(username='test').first().id)
 
