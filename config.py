@@ -1,6 +1,8 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 log_dir = os.path.join(basedir, 'tmp', 'log')
+cache_file = os.path.join(basedir, 'tmp', 'todo_cache.db')
+cache_file_write = False
 
 
 class Config:
