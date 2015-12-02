@@ -22,31 +22,45 @@ class APITestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def get_api_headers(self, token):
-        return {'Authorization': token + ':' + None,
+    def get_api_headers(self, username, password):
+        return {'Authorization': 'Basic ' + b64encode(
+                (username + ':' + password).encode('utf-8')).decode('utf-8'),
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'}
+                'Content-Type': 'application/json'
+               }
 
     def test_token_auth(self):
         # add user
         from app.models import User
-        User.add_user(User(username='test',
-                           password='test',
+        username = 'test'
+        password = 'test123'
+
+        User.add_user(User(username=username,
+                           password=password,
                            is_admin=False,
                            email='test@test.com',
                            confirmed=True))
 
         # request without token
-        #response = self.client.get(url_for('api_1.test'),
-        #                           headers=self.get_api_headers('bad-token', ''))
-        #print response.status_code
+        response = self.client.get(url_for('api_1.echo'),
+                                   headers=self.get_api_headers('bad-token', ''))
+        self.assertEqual(response.status_code, 401)
 
+        # get token
         response = self.client.post(url_for('api_1.login'),
-                                   data=json.dumps({'username': 'test', 'password': 'test'}),
+                                   data=json.dumps({'username': username, 'password': password}),
                                    content_type='application/json')
-        print response
         json_response = json.loads(response.data)
-        self.assertIsNotNone(json_response.get('auth_token'))
-        self.assertIsNotNone(response.headers[2])
-        self.assertEqual(cache.get(json_response['auth_token']), User.query.filter_by(username='test').first().id)
 
+        token = json_response['auth_token']
+        self.assertIsNotNone(token)
+        self.assertIsNotNone(response.headers[2])
+        self.assertEqual(cache.get(json_response['auth_token']),
+                         User.query.filter_by(username=username).first().id)
+
+        # request with correct token
+        response = self.client.get(url_for('api_1.echo'),
+                                   headers=self.get_api_headers(token, ''),
+                                   data=json.dumps({'data': 'echo test'}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['data'], 'echo test')
