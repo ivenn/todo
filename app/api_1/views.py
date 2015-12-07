@@ -48,7 +48,9 @@ def login():
     if user.verify_password(request.json['password']):
         login_user(user)
         if not user.confirmed:
-            return make_response(jsonify({'error': 'You registration is not confirmed'}), 404)
+            return make_response(jsonify({'error': 'You registration is not finished, \
+                                                    please, confirm your accout by link from email'}),
+                                 404)
         session['auth_token'] = g.user.generate_auth_token().decode('ascii')
         return make_response(jsonify({'auth_token': session['auth_token']}), 200)
     else:
