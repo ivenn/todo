@@ -7,20 +7,20 @@ from app.models import User, Task, TaskList
 
 from logging import getLogger
 
-log = getLogger(__name__)
+_log = getLogger(__name__)
 
 auth = HTTPBasicAuth()
 
 
 @api.before_request
 def before_request():
-    log.debug("Request:\nHEAD:%sDATA: %s" % 
-             (request.headers, request.data))
+    _log.debug("Request:\nHEAD:%sDATA: %s" % (request.headers, request.data))
     g.user = current_user
+
 
 @api.after_request
 def after_request(response):
-    log.debug("Response:%s" % (response))
+    _log.debug("Response:%s" % (response))
     return response
 
 
@@ -39,7 +39,7 @@ def verify_password(token, username=None):
 
 @api.route('/login', methods=['POST'])
 def login():
-    log.info("login: %s" % request.json)
+    _log.info("login: %s" % request.json)
     if not request.json or 'username' not in request.json or 'password' not in request.json:
         return make_response(jsonify({'error': 'wrong request'}), 404)
 
@@ -60,7 +60,7 @@ def login():
 @api.route('/logout', methods=['POST'])
 @auth.login_required
 def logout():
-    log.info("logout: %s" % request.json)
+    _log.info("logout: %s" % request.json)
     session['auth_token'] = None
     logout_user()
     return make_response(jsonify({}), 204)
@@ -69,5 +69,5 @@ def logout():
 @api.route('/echo', methods=['GET'])
 @auth.login_required
 def echo():
-    log.info("echo: %s" % request.json)
+    _log.info("echo: %s" % request.json)
     return make_response(jsonify({'data': request.json['data']}), 200)

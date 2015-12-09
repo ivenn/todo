@@ -9,7 +9,7 @@ from app.email_sender import send_email
 
 from logging import getLogger
 
-_LOGGER = getLogger(__name__)
+_log = getLogger(__name__)
 
 @main.before_request
 def before_request():
@@ -40,8 +40,8 @@ def registration():
         try:
             send_email(to=form.email.data, subject='registration on toDo', template=html_mail)
         except Exception as e:
-            _LOGGER.error("E-mail was not sent")
-            _LOGGER.error("Exception: %s" % str(str(e)))
+            _log.error("E-mail was not sent")
+            _log.error("Exception: %s" % str(str(e)))
         flash("Welcome! Please, follow link from confirmation email to finish registration.", 'info')
 
         return redirect(url_for('main.login'))
@@ -54,19 +54,19 @@ def personal():
     tlform = TaskListForm()
 
     if tlform.validate_on_submit():
-        err = g.user.create_list(TaskList(name=tlform.name.data, 
-                                          description=tlform.description.data, 
+        err = g.user.create_list(TaskList(name=tlform.name.data,
+                                          description=tlform.description.data,
                                           author_id=g.user.id))
         if not err:
             flash('Task List %s was added successfully' % tlform.name.data, 'success')
         else:
             flash(err, 'warning')
         return redirect(url_for('main.personal'))
-    return render_template('personal.html', 
+    return render_template('personal.html',
                            user=g.user,
                            task_list=None,
                            task_lists=g.user.get_task_lists(),
-                           tform=None, 
+                           tform=None,
                            tlform=tlform,
                            sform=None)
 
@@ -95,7 +95,7 @@ def user_lists(list_id):
                            user=g.user,
                            task_list=tlist,
                            task_lists=None,
-                           tform=tform, 
+                           tform=tform,
                            tlform=None,
                            sform=None)
 
@@ -135,7 +135,7 @@ def subscribe_user_to_list(list_id):
                            user=g.user,
                            task_list=None,
                            task_lists=None,
-                           tform=None, 
+                           tform=None,
                            tlform=None,
                            sform=sform)
 
@@ -164,7 +164,7 @@ def task_state(list_id, task_id, state):
         abort(404)
 
     t.update_state(state)
-    return redirect(url_for('main.user_lists', list_id=list_id)) 
+    return redirect(url_for('main.user_lists', list_id=list_id))
 
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -192,7 +192,7 @@ def confirmation(token):
     try:
         username = confirm_token(token)
     except Exception as e:
-        _LOGGER.error("Token wasn't confirmed: %s" % str(e))
+        _log.error("Token wasn't confirmed: %s" % str(e))
         flash('The confirmation link is invalid or expired', 'danger')
         return redirect(url_for('main.login'))
     user = User.query.filter_by(username=username).first_or_404()
@@ -209,6 +209,7 @@ def confirmation(token):
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
 
 @main.route('/settings', methods=['GET', 'POST'])
 @login_required
