@@ -26,8 +26,7 @@ class APITestCase(unittest.TestCase):
         return {'Authorization': 'Basic ' + b64encode(
                 (username + ':' + password).encode('utf-8')).decode('utf-8'),
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-               }
+                'Content-Type': 'application/json'}
 
     def test_token_auth(self):
         # add user
@@ -48,8 +47,9 @@ class APITestCase(unittest.TestCase):
 
         # get token
         response = self.client.post(url_for('api_1.login'),
-                                   data=json.dumps({'username': username, 'password': password}),
-                                   content_type='application/json')
+                                    data=json.dumps({'username': username,
+                                                    'password': password}),
+                                    content_type='application/json')
         json_response = json.loads(response.data)
 
         token = json_response['auth_token']

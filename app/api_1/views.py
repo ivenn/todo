@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, session, request, g
+from flask import jsonify, make_response, session, request, g, abort, url_for
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from flask_httpauth import HTTPBasicAuth
 
@@ -22,6 +22,11 @@ def before_request():
 def after_request(response):
     _log.debug("Response:%s" % (response))
     return response
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'Bad request'}), 400)
 
 
 @auth.verify_password
