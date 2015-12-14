@@ -76,3 +76,68 @@ def logout():
 def echo():
     _log.info("echo: %s" % request.json)
     return make_response(jsonify({'data': request.json['data']}), 200)
+
+
+# ===== List API =====
+
+
+@api.route('/user/<int:id>/list/<int:id>', methods=['GET'])
+@auth.login_required
+def get_list():
+    pass
+
+
+@api.route('/user/<int:id>/list', methods=['POST'])
+@auth.login_required
+def create_list():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>', methods=['PUT'])
+@auth.login_required
+def update_list():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>', methods=['DELETE'])
+@auth.login_required
+def delete_list():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>/subscribe', methods=['POST'])
+@auth.login_required
+def subscribe_on_list():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>/unsubscribe', methods=['POST'])
+@auth.login_required
+def unsubscribe_from_list():
+    pass
+
+
+# ===== Task API =====
+
+@api.route('/users/<int:id>/lists/<int:id>/tasks/<int:id>', methods=['GET'])
+@auth.login_required
+def get_task():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>/tasks', methods=['POST'])
+@auth.login_required
+def create_task():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>/tasks/<int:id>', methods=['PUT'])
+@auth.login_required
+def update_task():
+    pass
+
+
+@api.route('/users/<int:id>/lists/<int:id>/tasks/<int:id>', methods=['DELETE'])
+@auth.login_required
+def delete_task():
+    pass
