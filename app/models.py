@@ -74,6 +74,12 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def delete_list(self, task_list):
+        if not task_list.name in [tl.name for tl in self.tasklists]:
+            return "User %s has no %s task list" % (user.username, task_list.name)
+        self.tasklists.remove(task_list)
+        db.session.commit()
+
     def subscribe_user_to_list(self, user, task_list):
         if task_list in user.tasklists:
             return "User %s is already subscribed to %s list" % (user.username, task_list.name)
