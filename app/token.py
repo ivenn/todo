@@ -3,7 +3,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask import current_app
 from logging import getLogger
 
-_LOGGER = getLogger(__name__)
+_log = getLogger(__name__)
 
 
 def generate_confiramation_token(name):

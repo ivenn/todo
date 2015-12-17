@@ -74,6 +74,12 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def delete_list(self, task_list):
+        if not task_list.name in [tl.name for tl in self.tasklists]:
+            return "User %s has no %s task list" % (user.username, task_list.name)
+        self.tasklists.remove(task_list)
+        db.session.commit()
+
     def subscribe_user_to_list(self, user, task_list):
         if task_list in user.tasklists:
             return "User %s is already subscribed to %s list" % (user.username, task_list.name)
@@ -91,8 +97,9 @@ class User(db.Model, UserMixin):
             db.session.commit()
 
     def generate_auth_token(self, expiration=36000):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in = expiration)
-        token = s.dumps({ 'id': self.id })
+        s = Serializer(current_app.config['SECRET_KEY'],
+                       expires_in=expiration)
+        token = s.dumps({'id': self.id})
         cache.set(token, self.id, expiration)
         return token
 
@@ -119,7 +126,6 @@ class TaskList(db.Model):
     name_author_constraint = db.UniqueConstraint('name', 'author_id', name='unique_tlname_tlauthor')
     __table_args__ = (name_author_constraint,)
 
-
     def add_task(self, new_task):
         if new_task.name in [t.name for t in self.tasks]:
             return "Task list %s already has task with name '%s'" % (self.name, new_task.name)
@@ -143,7 +149,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(120), index=True, nullable=False)
     description = db.Column(db.String(1024))
-    state = db.Column(db.Enum(*TASK_STATES)) 
+    state = db.Column(db.Enum(*TASK_STATES))
     due_datetime = db.Column(db.DateTime())
 
     tasklist_id = db.Column(db.Integer, db.ForeignKey('tasklist.id'), nullable=False)
@@ -158,5 +164,4 @@ class Task(db.Model):
         self.state = state
         db.session.add(self)
         db.session.commit()
-
 
