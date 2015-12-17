@@ -92,6 +92,9 @@ def echo():
 @api.route('/users/<int:user_id>/lists/<int:list_id>', methods=['GET'])
 @auth.login_required
 def get_list(user_id, list_id):
+    """
+    Retuns info about task list with concrete id
+    """
     if user_id != g.user.id:
         abort(403)
     tl = TaskList.query.filter_by(id=list_id).first()
@@ -102,9 +105,29 @@ def get_list(user_id, list_id):
                                       'description': tl.description}), 200)
 
 
+@api.route('/users/<int:user_id>/lists', methods=['GET'])
+@auth.login_required
+def get_lists(user_id):
+    """
+    Retuns info about all user's task lists(created by him or subcribed)
+    """
+    if user_id != g.user.id:
+        abort(403)
+    tlists = g.user.get_task_lists()
+    data = {}
+    for tlist in tlists:
+        data[tlist.id] = {'name': tlist.name,
+                          'description': tlist.description}
+
+    return make_response(jsonify(data), 200)
+
+
 @api.route('/users/<int:user_id>/lists', methods=['POST'])
 @auth.login_required
 def create_list(user_id):
+    """
+    Creates list with specified params
+    """
     if user_id != g.user.id:
         abort(403)
     if not request.json or 'name' not in request.json:
@@ -128,6 +151,9 @@ def create_list(user_id):
 @api.route('/users/<int:user_id>/lists/<int:list_id>', methods=['PUT'])
 @auth.login_required
 def update_list(user_id, list_id):
+    """
+    Updates list with specified params
+    """
     if user_id != g.user.id:
         abort(403)
     tl = TaskList.query.filter_by(id=list_id).first()
@@ -137,8 +163,8 @@ def update_list(user_id, list_id):
     tl.description = request.json.get('description')
 
     response = jsonify({'list': url_for('api_1.get_list',
-                                         user_id=g.user.id,
-                                         list_id=tl.id)})
+                                        user_id=g.user.id,
+                                        list_id=tl.id)})
 
     return make_response(response, 200)
 
@@ -146,6 +172,9 @@ def update_list(user_id, list_id):
 @api.route('/users/<int:user_id>/lists/<int:list_id>', methods=['DELETE'])
 @auth.login_required
 def delete_list(user_id, list_id):
+    """
+    Deletes list
+    """
     if user_id != g.user.id:
         abort(403)
     tl = TaskList.query.filter_by(id=list_id).first()
@@ -178,6 +207,12 @@ def unsubscribe_from_list(user_id, list_id):
 @api.route('/users/<int:user_id>/lists/<int:list_id>/tasks/<int:task_id>', methods=['GET'])
 @auth.login_required
 def get_task(user_id, list_id, task_id):
+    pass
+
+
+@api.route('/users/<int:user_id>/lists/<int:list_id>/tasks', methods=['GET'])
+@auth.login_required
+def get_tasks(user_id, list_id):
     pass
 
 

@@ -8,6 +8,8 @@ from app.models import User
 
 class APITestCase(unittest.TestCase):
 
+    tmp_user_num = 0
+
     def setUp(self):
         self.app = create_app('test')
 
@@ -31,15 +33,15 @@ class APITestCase(unittest.TestCase):
                 'Content-Type': 'application/json'}
 
     def get_tmp_user(self):
-        username = 'test'
+        username = 'test%s' % APITestCase.tmp_user_num
         password = 'test123'
 
         User.add_user(User(username=username,
                            password=password,
                            is_admin=False,
-                           email='test@test.com',
+                           email='%s@test.com' % username,
                            confirmed=True))
-
+        APITestCase.tmp_user_num += 1
         return username, password
 
     def get_token(self, username, password):
@@ -109,6 +111,14 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual({'name': tlist_name, 'description': tlist_desc},
                          json.loads(response.data))
+
+        # get user lists
+        response = self.client.get(url_for('api_1.get_lists', user_id=user.id),
+                                   headers=self.get_api_headers(token, ''),
+                                   data=json.dumps({}))
+        self.assertEqual(response.status_code, 200)
+        print json.loads(response.data)
+
         # update
         mod_tlist_name = 'mod_testlist'
         mod_tlist_desc = 'mod list desc'
