@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <title>TITLE_NAME</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" >
+    <link rel="shortcut icon" href="static/favicon.ico">
+    <link rel="icon" href="static/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="static/styles.css"> 
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-examnavbar-collapse-1">
+                </button>
+                <a class="navbar-brand" href="/">toDO</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> USER_NAME <b class="caret"></b>
+                </a>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="/">First</a></li>
+                    <li><a href="/">Second</a></li>
+                    <li><a href="/">Third</a></li>
+                  </ul>
+              </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="main">
+        <h3>admin's task lists:</h3>
+        <ul>
+            
+        </ul>
+    </div>
+    <div class="main">
+        <form action="" method="post" class="form" role="form">
+        <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value="1450970051##328c15defbd1c8e153f97da4e6987154118996ca"></div>
+        <div class="form-group  required"><label class="control-label" for="name">Task list name</label>
+            <input class="form-control" id="name" name="name" required type="text" value="">
+        </div>
+        <div class="form-group "><label class="control-label" for="description">Task list description</label>
+            <input class="form-control" id="description" name="description" type="text" value="">
+        </div>
+            <input class="btn btn-default" id="submit" name="submit" type="submit" value="Add task list">
+        </form>
+    </div>
+  </body>
+</html>

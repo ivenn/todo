@@ -1,0 +1,18 @@
+.main{
+    width: 80%;
+    margin: auto;
+    position:relative;
+}
+
+.item{
+    width: 90%;
+    border: solid 1px black;
+}
+
+.item-done{
+    background: #00FF00
+}
+
+ul{
+    list-style-type: none;
+}
