@@ -13,7 +13,11 @@
     {% macro render_task(task) %}
         <li>
             <table class='table table-condensed bg-info'>
+                {% if task.state == task.TASK_STATE_DONE %}
+                <tr class='item-done'>
+                {% else %}
                 <tr>
+                {% endif %}
                     <td>
                         <p class="btn btn-primary" role="link">{{ task.name }}</p>
                         <div class="btn-group">
@@ -59,7 +63,9 @@
         <br><br>
         <ul>
             {% for t in task_list.tasks %}
-                {{ render_task(t) }}
+                {% if t.state != t.TASK_STATE_DONE %}
+                    {{ render_task(t) }}
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
@@ -83,5 +89,22 @@
             </div>
         {% endif %} 
     {% endfor %}
+ 
+    <br><br>
+    {% if task_list %}
+    <div class='main'>
+    <h4>Complited task:</h4>
+
+        <ul>
+            {% for t in task_list.tasks %}
+                {% if t.state == t.TASK_STATE_DONE %}
+                    {{ render_task(t) }}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+
 
 {% endblock body %}
