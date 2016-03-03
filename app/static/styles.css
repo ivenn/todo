@@ -10,8 +10,10 @@
 }
 
 .item-done{
-    background: #00FF00
+    background: #CCCCCC
 }
+
+
 
 ul{
     list-style-type: none;
